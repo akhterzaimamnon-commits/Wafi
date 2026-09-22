@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wafi — UAE Corporate Tax Readiness</title>
+<style>
+  :root{
+    --navy:#14342B;
+    --navy-2:#0D241D;
+    --white:#FFFFFF;
+    --bg:#F6F5F0;
+    --text:#1A1A1A;
+    --muted:#6B6B6B;
+    --line:#E6E4DE;
+    --green:#0F3D2E;
+    --red:#8B2E2E;
+    --amber:#B8860B;
+    --accent:#5B7FA6;
+    --radius:6px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55;
+    min-height:100vh;
+  }
+  .shell{
+    max-width:720px;
+    margin:0 auto;
+    padding:0 20px 70px;
+  }
+  header.top{
+    background:var(--navy);
+    color:var(--white);
+    padding:28px 20px 24px;
+  }
+  header.top .inner{
+    max-width:720px;
+    margin:0 auto;
+  }
+  header.top h1{
+    margin:0 0 4px;
+    font-size:22px;
+    font-weight:700;
+  }
+  header.top p{
+    margin:0;
+    font-size:13px;
+    color:rgba(255,255,255,0.72);
+  }
+  .card{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:28px 26px;
+    margin-top:24px;
+  }
+  .progress{
+    display:flex;
+    gap:6px;
+    margin-bottom:22px;
+  }
+  .progress span{
+    height:4px;
+    flex:1;
+    background:var(--line);
+    border-radius:2px;
+    transition:background 0.2s;
+  }
+  .progress span.done{background:var(--accent);}
+  .progress span.active{background:var(--accent);}
+  .q-label{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:var(--muted);
+    margin-bottom:8px;
+    font-weight:600;
+  }
+  h2.question{
+    font-size:20px;
+    font-weight:700;
+    margin:0 0 6px;
+    color:var(--navy);
+  }
+  .helptext{
+    font-size:14px;
+    color:var(--muted);
+    margin-bottom:20px;
+  }
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-bottom:22px;
+  }
+  .opt{
+    display:block;
+    text-align:left;
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:14px 16px;
+    font-size:15px;
+    color:var(--text);
+    cursor:pointer;
+    transition:border-color 0.15s, background 0.15s;
+    font-family:inherit;
+  }
+  .opt:hover{border-color:var(--navy);}
+  .opt:focus-visible{outline:2px solid var(--navy); outline-offset:2px;}
+  .opt.selected{
+    border-color:var(--navy);
+    background:rgba(20,52,43,0.05);
+    font-weight:600;
+  }
+  .field{margin-bottom:20px;}
+  .field label{
+    display:block;
+    font-size:13px;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
+  .field input{
+    width:100%;
+    padding:12px 14px;
+    font-size:16px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--white);
+    color:var(--text);
+    font-family:inherit;
+  }
+  .field input:focus{outline:2px solid var(--navy); outline-offset:1px;}
+  .subfield{
+    display:none;
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:16px;
+    margin-top:4px;
+    margin-bottom:22px;
+  }
+  .subfield.show{display:block;}
+  .nav-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  button.btn{
+    font-size:14px;
+    font-weight:600;
+    padding:11px 22px;
+    border-radius:var(--radius);
+    border:1px solid var(--navy);
+    background:var(--navy);
+    color:var(--white);
+    cursor:pointer;
+    font-family:inherit;
+  }
+  button.btn:not(.ghost):hover:not(:disabled){background:var(--navy-2); border-color:var(--navy-2);}
+  button.btn:disabled{opacity:0.35; cursor:not-allowed;}
+  button.btn.ghost{
+    background:transparent;
+    color:var(--navy);
+    border-color:var(--line);
+  }
+  /* Results */
+  .results{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    margin-top:24px;
+    overflow:hidden;
+  }
+  .results-head{
+    background:var(--navy);
+    color:var(--white);
+    padding:22px 26px;
+  }
+  .results-head h2{
+    margin:0 0 3px;
+    font-size:19px;
+    font-weight:700;
+  }
+  .results-head .sub{
+    font-size:12px;
+    color:rgba(255,255,255,0.7);
+  }
+  .row{
+    display:flex;
+    gap:18px;
+    padding:20px 26px;
+    border-bottom:1px solid var(--line);
+    align-items:flex-start;
+  }
+  .row:last-child{border-bottom:none;}
+  .row .tag{
+    flex:0 0 118px;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    color:var(--accent);
+    font-weight:700;
+    padding-top:2px;
+  }
+  .row .body{flex:1; min-width:0;}
+  .verdict{
+    font-size:17px;
+    font-weight:700;
+    margin-bottom:4px;
+  }
+  .verdict.yes{color:var(--green);}
+  .verdict.no{color:var(--navy);}
+  .verdict.warn{color:var(--amber);}
+  .verdict.risk{color:var(--red);}
+  .explain{
+    font-size:14px;
+    color:var(--text);
+    margin-bottom:8px;
+  }
+  .src{
+    display:block;
+    font-size:12px;
+    color:var(--muted);
+  }
+  .cert-foot{
+    background:var(--bg);
+    padding:20px 26px;
+    font-size:13px;
+    color:var(--muted);
+  }
+  .cert-foot p{margin:0 0 8px;}
+  .cert-foot p:last-child{margin-bottom:0;}
+  .restart{
+    text-align:center;
+    margin-top:18px;
+  }
+  .restart a{
+    color:var(--navy);
+    font-size:14px;
+    cursor:pointer;
+    text-decoration:underline;
+  }
+  @media (max-width:480px){
+    .row{flex-direction:column; gap:4px;}
+    .row .tag{flex:none;}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="inner">
+    <h1>Wafi</h1>
+    <p>UAE Corporate Tax readiness check</p>
+    <p style="font-style:italic; margin-top:2px;">Know where you stand, before the FTA asks.</p>
+  </div>
+</header>
+
+<div class="shell">
+
+  <div class="card" id="wizard">
+    <div class="progress">
+      <span id="p1" class="active"></span>
+      <span id="p2"></span>
+      <span id="p3"></span>
+      <span id="p4"></span>
+    </div>
+
+    <!-- Q1 -->
+    <div class="qpanel" id="q1">
+      <div class="q-label">Question 1 of 4</div>
+      <h2 class="question">Is your business a company or an individual?</h2>
+      <p class="helptext">This means a juridical person (company) versus a natural person (sole individual carrying on business).</p>
+      <div class="options">
+        <button class="opt" data-q="entity" data-v="company">Company (juridical person)</button>
+        <button class="opt" data-q="entity" data-v="individual">Individual (natural person)</button>
+      </div>
+      <div class="nav-row"><span></span><button class="btn" id="next1" disabled>Next</button></div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="qpanel" id="q2" style="display:none;">
+      <div class="q-label">Question 2 of 4</div>
+      <h2 class="question">Are you in a Free Zone?</h2>
+      <p class="helptext">This means your business is registered and licensed in a UAE Free Zone, not the mainland.</p>
+      <div class="options">
+        <button class="opt" data-q="freezone" data-v="yes">Yes</button>
+        <button class="opt" data-q="freezone" data-v="no">No</button>
+      </div>
+      <div class="nav-row"><button class="btn ghost" id="back2">Back</button><button class="btn" id="next2" disabled>Next</button></div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="qpanel" id="q3" style="display:none;">
+      <div class="q-label">Question 3 of 4</div>
+      <h2 class="question">What is your annual revenue?</h2>
+      <p class="helptext">Use your total annual business revenue, not profit.</p>
+      <div class="options">
+        <button class="opt" data-q="revBand" data-v="under3m">Under AED 3 million</button>
+        <button class="opt" data-q="revBand" data-v="3to50m">AED 3 million to AED 50 million</button>
+        <button class="opt" data-q="revBand" data-v="over50m">Over AED 50 million</button>
+      </div>
+      <div class="subfield" id="exactRevWrap">
+        <div class="field" style="margin-bottom:0;">
+          <label for="exactRevInput">To check your VAT position accurately, enter your exact annual revenue (AED)</label>
+          <input type="number" id="exactRevInput" min="0" step="1" placeholder="e.g. 250000">
+        </div>
+      </div>
+      <div class="nav-row"><button class="btn ghost" id="back3">Back</button><button class="btn" id="next3" disabled>Next</button></div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="qpanel" id="q4" style="display:none;">
+      <div class="q-label">Question 4 of 4</div>
+      <h2 class="question">What is your financial year-end?</h2>
+      <p class="helptext">Most UAE companies use 31 December. Your deadline is based on this date.</p>
+      <div class="options">
+        <button class="opt" data-q="yearEndPreset" data-v="dec31">31 December</button>
+        <button class="opt" data-q="yearEndPreset" data-v="mar31">31 March</button>
+        <button class="opt" data-q="yearEndPreset" data-v="other">Other</button>
+      </div>
+      <div class="subfield" id="presetYearWrap">
+        <div class="field" style="margin-bottom:0;">
+          <label for="presetYearInput">Which year did (or will) this year-end fall in?</label>
+          <input type="number" id="presetYearInput" min="2000" max="2100" step="1" placeholder="e.g. 2026">
+        </div>
+      </div>
+      <div class="subfield" id="customDateWrap">
+        <div class="field" style="margin-bottom:0;">
+          <label for="customDayInput">Enter your financial year-end date, including the year (DD/MM/YYYY)</label>
+          <div style="display:flex; gap:8px;">
+            <input type="number" id="customDayInput" min="1" max="31" step="1" placeholder="DD" style="flex:0.8;">
+            <input type="number" id="customMonthInput" min="1" max="12" step="1" placeholder="MM" style="flex:0.8;">
+            <input type="number" id="customYearInput" min="2000" max="2100" step="1" placeholder="YYYY" style="flex:1.2;">
+          </div>
+          <div id="customDateError" style="display:none; font-size:12px; color:var(--red); margin-top:6px;"></div>
+        </div>
+      </div>
+      <div class="nav-row"><button class="btn ghost" id="back4">Back</button><button class="btn" id="seeResults" disabled>See my results</button></div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results" id="results" style="display:none;"></div>
+
+  <div class="restart" id="restartWrap" style="display:none;">
+    <a id="restartLink">Start over</a>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  const answers = { entity:null, freezone:null, revBand:null, exactRevenue:null, yearEndPreset:null, presetYear:null, customDay:null, customMonth:null, customYear:null };
+
+  function daysInMonth(month, year){
+    // month is 1-12
+    return new Date(year, month, 0).getDate();
+  }
+
+  function validateCustomDate(){
+    const day = answers.customDay, month = answers.customMonth, year = answers.customYear;
+    const errEl = document.getElementById('customDateError');
+    const btn = document.getElementById('seeResults');
+    if(day==null || month==null || year==null){
+      errEl.style.display = 'none';
+      btn.disabled = true;
+      return;
+    }
+    if(month < 1 || month > 12){
+      errEl.textContent = 'Month must be between 1 and 12.';
+      errEl.style.display = '';
+      btn.disabled = true;
+      return;
+    }
+    const maxDay = daysInMonth(month, year);
+    if(day < 1 || day > maxDay){
+      errEl.textContent = `That month only has ${maxDay} days.`;
+      errEl.style.display = '';
+      btn.disabled = true;
+      return;
+    }
+    if(year < 2000 || year > 2100){
+      errEl.textContent = 'Enter a 4-digit year.';
+      errEl.style.display = '';
+      btn.disabled = true;
+      return;
+    }
+    errEl.style.display = 'none';
+    btn.disabled = false;
+  }
+  const panels = ['q1','q2','q3','q4'];
+  const dots = ['p1','p2','p3','p4'];
+
+  function showPanel(i){
+    panels.forEach((id,idx)=>{
+      document.getElementById(id).style.display = idx===i ? '' : 'none';
+    });
+    dots.forEach((id,idx)=>{
+      const el = document.getElementById(id);
+      el.classList.remove('active','done');
+      if(idx < i) el.classList.add('done');
+      else if(idx === i) el.classList.add('active');
+    });
+  }
+
+  document.querySelectorAll('.opt').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const q = btn.dataset.q;
+      const v = btn.dataset.v;
+      const group = btn.parentElement;
+      group.querySelectorAll('.opt').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');
+
+      if(q==='entity'){
+        answers.entity = v;
+        document.getElementById('next1').disabled = false;
+      }
+      if(q==='freezone'){
+        answers.freezone = v;
+        document.getElementById('next2').disabled = false;
+      }
+      if(q==='revBand'){
+        answers.revBand = v;
+        const wrap = document.getElementById('exactRevWrap');
+        if(v === 'under3m'){
+          wrap.classList.add('show');
+          answers.exactRevenue = null;
+          document.getElementById('exactRevInput').value = '';
+          document.getElementById('next3').disabled = true;
+        } else {
+          wrap.classList.remove('show');
+          answers.exactRevenue = null;
+          document.getElementById('next3').disabled = false;
+        }
+      }
+      if(q==='yearEndPreset'){
+        answers.yearEndPreset = v;
+        const yearWrap = document.getElementById('presetYearWrap');
+        const dateWrap = document.getElementById('customDateWrap');
+        if(v === 'other'){
+          yearWrap.classList.remove('show');
+          dateWrap.classList.add('show');
+          answers.presetYear = null;
+          answers.customDay = null;
+          answers.customMonth = null;
+          answers.customYear = null;
+          document.getElementById('customDayInput').value = '';
+          document.getElementById('customMonthInput').value = '';
+          document.getElementById('customYearInput').value = '';
+          document.getElementById('customDateError').style.display = 'none';
+          document.getElementById('seeResults').disabled = true;
+        } else {
+          dateWrap.classList.remove('show');
+          yearWrap.classList.add('show');
+          answers.customDay = null;
+          answers.customMonth = null;
+          answers.customYear = null;
+          answers.presetYear = null;
+          document.getElementById('presetYearInput').value = '';
+          document.getElementById('seeResults').disabled = true;
+        }
+      }
+    });
+  });
+
+  document.getElementById('exactRevInput').addEventListener('input', (e)=>{
+    const v = parseFloat(e.target.value);
+    answers.exactRevenue = isNaN(v) ? null : v;
+    document.getElementById('next3').disabled = !(v>=0);
+  });
+
+  document.getElementById('customDayInput').addEventListener('input', (e)=>{
+    const v = parseInt(e.target.value, 10);
+    answers.customDay = isNaN(v) ? null : v;
+    validateCustomDate();
+  });
+  document.getElementById('customMonthInput').addEventListener('input', (e)=>{
+    const v = parseInt(e.target.value, 10);
+    answers.customMonth = isNaN(v) ? null : v;
+    validateCustomDate();
+  });
+  document.getElementById('customYearInput').addEventListener('input', (e)=>{
+    const v = parseInt(e.target.value, 10);
+    answers.customYear = isNaN(v) ? null : v;
+    validateCustomDate();
+  });
+
+  document.getElementById('presetYearInput').addEventListener('input', (e)=>{
+    const v = parseInt(e.target.value, 10);
+    answers.presetYear = isNaN(v) ? null : v;
+    document.getElementById('seeResults').disabled = !(v >= 2000 && v <= 2100);
+  });
+
+  document.getElementById('next1').addEventListener('click', ()=>showPanel(1));
+  document.getElementById('next2').addEventListener('click', ()=>showPanel(2));
+  document.getElementById('next3').addEventListener('click', ()=>showPanel(3));
+  document.getElementById('back2').addEventListener('click', ()=>showPanel(0));
+  document.getElementById('back3').addEventListener('click', ()=>showPanel(1));
+  document.getElementById('back4').addEventListener('click', ()=>showPanel(2));
+
+  document.getElementById('seeResults').addEventListener('click', ()=>{
+    renderResults();
+  });
+
+  document.getElementById('restartLink').addEventListener('click', ()=>{
+    location.reload();
+  });
+
+  function addMonths(date, months){
+    // UAE Corporate Tax deadline = the LAST DAY of the month that is `months`
+    // calendar months after the year-end month — always, regardless of what
+    // day-of-month the year-end itself falls on (e.g. 25 Dec year-end still
+    // gives a 30 Sep deadline, not 25 Sep).
+    return new Date(date.getFullYear(), date.getMonth() + months + 1, 0);
+  }
+  function fmt(d){
+    return d.toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'numeric'});
+  }
+  function today(){
+    return fmt(new Date());
+  }
+
+  function renderResults(){
+    const isCompany = answers.entity === 'company';
+    const isFreezone = answers.freezone === 'yes';
+    const band = answers.revBand;
+
+    // Effective revenue figure for threshold checks
+    // under3m band uses the exact figure the user gave; other bands are unambiguously above AED 375,000
+    let effRevenue;
+    if(band === 'under3m') effRevenue = answers.exactRevenue;
+    else if(band === '3to50m') effRevenue = 3000001; // above SBR/VAT thresholds, below 50M
+    else effRevenue = 50000001; // over 50M
+
+    const verified = today();
+
+    // --- Registration ---
+    let mustRegisterCT, regText;
+    if(isCompany){
+      mustRegisterCT = true;
+      regText = "Every UAE company must register for Corporate Tax, even if it expects to pay nothing.";
+    } else {
+      mustRegisterCT = effRevenue > 1000000;
+      regText = mustRegisterCT
+        ? "As an individual, your annual business revenue exceeds AED 1,000,000, so you must register for Corporate Tax."
+        : "As an individual, you must register only if your annual business revenue exceeds AED 1,000,000. Based on your answer, you are not required to register for Corporate Tax.";
+    }
+
+    // --- VAT ---
+    let vatVerdict, vatText;
+    if(effRevenue < 187500){
+      vatVerdict = 'not-eligible';
+      vatText = "Your revenue is below AED 187,500, so you are not eligible for VAT registration.";
+    } else if(effRevenue < 375000){
+      vatVerdict = 'optional';
+      vatText = "Your revenue is between AED 187,500 and AED 375,000, so VAT registration is optional.";
+    } else {
+      vatVerdict = 'required';
+      vatText = "Your revenue is above AED 375,000, so you must register for VAT.";
+    }
+    vatText += " You must register within 30 days of exceeding the threshold.";
+
+    // --- Regime ---
+    let regimeVerdict, regimeClass, regimeExplain;
+    if(isFreezone){
+      regimeVerdict = "Qualifying Free Zone Person (0% Tax)";
+      regimeClass = "yes";
+      regimeExplain = `To maintain this status, you must keep meeting all of the following:
+        <ul style="margin:8px 0 0; padding-left:18px;">
+          <li>Non-qualifying income stays under 5% of revenue, or AED 5,000,000 — whichever is lower</li>
+          <li>Real substance is maintained in the Free Zone</li>
+          <li>Audited financial statements are obtained</li>
+          <li>If you distribute goods, an Agreed-Upon Procedures (AUP) Report from an independent auditor is submitted to the FTA within 30 days of your Corporate Tax return deadline</li>
+        </ul>
+        Failing any of these loses 0% status for 5 years.`;
+    } else if(band === 'under3m'){
+      regimeVerdict = "Eligible for Small Business Relief (SBR)";
+      regimeClass = "yes";
+      regimeExplain = "Not automatic — must be elected in your CT return. Based on revenue, not profit.";
+    } else {
+      regimeVerdict = "Standard Corporate Tax regime (9%)";
+      regimeClass = "no";
+      regimeExplain = "Your revenue exceeds the AED 3,000,000 Small Business Relief limit, so standard Corporate Tax rules apply.";
+    }
+
+    // --- Audit ---
+    let auditVerdict, auditClass, auditExplain;
+    if(isFreezone){
+      auditVerdict = "Audited financial statements required";
+      auditClass = "warn";
+      auditExplain = "This applies regardless of revenue, to support your Qualifying Free Zone Person status.";
+    } else if(band === 'over50m'){
+      auditVerdict = "Audited financial statements required";
+      auditClass = "warn";
+      auditExplain = "This applies because your revenue is over AED 50,000,000.";
+    } else {
+      auditVerdict = "Audit not mandatory for Corporate Tax purposes";
+      auditClass = "no";
+      auditExplain = "Based on your revenue, audit is not required for Corporate Tax purposes.";
+    }
+
+    // --- Deadline ---
+    // Always built from the year-end date the user gave in Q4 — never from today's date.
+    let yearEndDate;
+    if(answers.yearEndPreset === 'dec31') yearEndDate = new Date(answers.presetYear, 11, 31);
+    else if(answers.yearEndPreset === 'mar31') yearEndDate = new Date(answers.presetYear, 2, 31);
+    else yearEndDate = new Date(answers.customYear, answers.customMonth - 1, answers.customDay);
+
+    const ctDeadline = fmt(addMonths(yearEndDate, 9));
+
+    // Build results HTML based on entity type
+    let html = `
+      <div class="results-head">
+        <h2>Your Wafi readiness check</h2>
+        <div class="sub">Based on the answers you just gave — nothing was sent, stored, or shared</div>
+      </div>
+
+      <div class="row">
+        <div class="tag">Registration</div>
+        <div class="body">
+          <div class="verdict ${mustRegisterCT?'yes':'no'}">Corporate Tax: ${mustRegisterCT ? 'Must register' : 'Not required to register'}</div>
+          <div class="explain">${regText}</div>
+          <span class="src">Source: Federal Tax Authority — Corporate Tax Registration | Last verified: ${verified}</span>
+        </div>
+      </div>
+    `;
+
+    // Only show VAT, Regime, and Audit sections for companies
+    if(isCompany){
+      html += `
+      <div class="row">
+        <div class="tag">VAT</div>
+        <div class="body">
+          <div class="verdict ${vatVerdict==='required'?'yes':(vatVerdict==='optional'?'warn':'no')}">${
+            vatVerdict==='required' ? 'Must register for VAT' : (vatVerdict==='optional' ? 'VAT registration is optional' : 'Not eligible for VAT registration')
+          }</div>
+          <div class="explain">${vatText}</div>
+          <span class="src">Source: Federal Tax Authority — VAT Registration | Last verified: ${verified}</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="tag">Regime</div>
+        <div class="body">
+          <div class="verdict ${regimeClass}">${regimeVerdict}</div>
+          <div class="explain">${regimeExplain}</div>
+          <span class="src">Source: Ministerial Decision on Small Business Relief; Qualifying Free Zone Person rules | Last verified: ${verified}</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="tag">Audit</div>
+        <div class="body">
+          <div class="verdict ${auditClass}">${auditVerdict}</div>
+          <div class="explain">${auditExplain}</div>
+          <span class="src">Source: Ministerial Decision on Audited Financial Statements | Last verified: ${verified}</span>
+        </div>
+      </div>
+      `;
+    }
+
+    html += `
+      <div class="row">
+        <div class="tag">Deadlines</div>
+        <div class="body">
+          <div class="verdict no">Corporate Tax return and payment: ${ctDeadline}</div>
+          <div class="explain">This is 9 months after your financial year-end. No extensions, no instalments. Payment is due with the return.</div>
+          <span class="src">Source: Federal Tax Authority — Filing Deadlines | Last verified: ${verified}</span>
+        </div>
+      </div>
+
+      <div class="cert-foot">
+        <p><strong>This is not tax advice.</strong> It is a plain-language guide based on general rules. Rules change, and your exact situation may differ. Confirm with the Federal Tax Authority or a licensed tax agent before filing.</p>
+        <p>Nothing you entered was sent, stored, or shared.</p>
+      </div>
+    `;
+
+    document.getElementById('wizard').style.display = 'none';
+    const resultsEl = document.getElementById('results');
+    resultsEl.innerHTML = html;
+    resultsEl.style.display = '';
+    document.getElementById('restartWrap').style.display = '';
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+})();
+</script>
+
+</body>
+</html>
