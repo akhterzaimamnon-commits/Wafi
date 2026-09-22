@@ -21,10 +21,6 @@ UAE businesses, accountants, and anyone who needs a plain-language answer to "wh
 - Everything runs in your browser
 - Rules sourced from Federal Tax Authority and Ministry of Finance decisions
 
-## Live tool
-
-https://akhterzaimannnon-commits.github.io/Wafi/
-
 ## Disclaimer
 
 This is not tax advice. It is a plain-language guide based on general rules. Rules change, and your exact situation may differ. Confirm with the Federal Tax Authority or a licensed tax agent before filing.
